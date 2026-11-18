@@ -1,0 +1,5 @@
+N,reps,sort_ms_median,sort_ms_p99,python,processor
+100,100,0.04069999977218686,0.08849800038660775,3.13.4,"Intel64 Family 6 Model 154 Stepping 4, GenuineIntel"
+1000,100,0.5748499997935141,1.8845530000544395,3.13.4,"Intel64 Family 6 Model 154 Stepping 4, GenuineIntel"
+10000,100,10.942549999981566,30.8520620001764,3.13.4,"Intel64 Family 6 Model 154 Stepping 4, GenuineIntel"
+100000,100,244.32260000003225,513.1190380003868,3.13.4,"Intel64 Family 6 Model 154 Stepping 4, GenuineIntel"

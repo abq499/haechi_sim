@@ -1,0 +1,20 @@
+A_skew: 630 runs in 38.8s
+A_scale: 630 runs in 56.6s
+B_engines: 120 runs in 32.3s
+C_jitter: 270 runs in 24.2s
+C_collusion: 540 runs in 22.4s
+C_liveness: 450 runs in 1.7s
+D_ablation: 240 runs in 14.8s
+E1_rofvr: 5880 runs in 684.9s
+E1_tail: 2160 runs in 297.0s
+R_ablation: 150 runs in 16.0s
+R_collusion: 720 runs in 40.5s
+R_liveness: 600 runs in 4.0s
+E2_reorder: 630 runs in 71.3s
+E3_insert: 1080 runs in 256.5s
+E4_withhold: 360 runs in 19.7s
+E5_skip: 960 runs in 80.3s
+E6_rotation: 810 runs in 146.9s
+E7_hetero: 960 runs in 210.1s
+exit 0
+E7_hetero: 960 runs in 270.6s

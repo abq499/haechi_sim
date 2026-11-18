@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Paper sources and builds (kept on Overleaf, not part of the code release)
+_2026__Cross_Shard_Thinh_Thien_ICCIES_2027/
+build/
+*.zip
+
+# Internal working notes
+CLAUDE.md
+PROGRESS.md
+DECISIONS.md
+
+# Editor and personal tooling
+.vscode/
+.idea/
+.agents/
+.claude/
+skills-lock.json
+
+# Scratch campaign outputs (use --out for dry runs)
+results_tmp*/
+scratch/

@@ -1,0 +1,103 @@
+% Fig. 2 of the DLO paper (LLNCS text width). Regenerate the CSVs with scripts/export_paper.py.
+%
+% DATA CONTRACT
+%   source: results/raw/E1_rofvr.csv via scripts/export_paper.py
+%           -> fig_core_results_skew.csv (n = 3) and fig_core_results_scale.csv (delta_max = 1.0 s).
+%   unit:   mean over 30 seeds; error bars = 95 % Student-t CI half-width (*_ci columns).
+%   model:  lockstep (Poisson 1 tx/s/shard, cut offset U(0, 0.05 s), delay U(0.01, 0.05 s),
+%           tau_max = eps + tau + Delta).
+%   panels: (a) attack-induced FVR vs max skew, n = 3; (b) latency vs max skew, n = 3 (log);
+%           (c) attack-induced FVR vs n; (d) latency vs n (log).
+%   encoding: Haechi, rounds = orange, filled circle, solid; Haechi, watermark = plum, triangle,
+%             dotted; DLO = blue, open square, dashed. Haechi-rounds and DLO latencies coincide.
+% build:  TEXINPUTS must include the paper's figures/ folder (draw-paper.sty).
+% target: 122 mm x 76 mm.
+
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{draw-paper}
+
+\def\FigureWidthMM{122}
+\def\FigureHeightMM{76}
+
+\pgfplotsset{
+  dlo panel/.style={
+    draw axis,
+    width=42mm, height=17mm,
+    xtick pos=bottom, ytick pos=left,
+    scaled y ticks=false,
+    anchor=south west,
+    ymajorgrids,
+    unbounded coords=discard,
+    filter discard warning=false,
+    title style={at={(0,1)},anchor=south west,xshift=-1mm,yshift=0.4mm},
+    ylabel style={yshift=-1.0mm},
+    xlabel style={yshift=0.8mm},
+    every axis plot/.append style={line width=0.85pt},
+  },
+  haechi line/.style={draw=drawOrange,mark=*,mark size=1.35pt,mark options={fill=drawOrange,solid},
+    error bars/error bar style={drawOrange,solid,line width=0.5pt}},
+  wm line/.style={draw=drawPlum,densely dotted,mark=triangle*,mark size=1.6pt,mark options={fill=drawPlum,solid},
+    error bars/error bar style={drawPlum,solid,line width=0.5pt}},
+  dlo line/.style={draw=drawBlue,densely dashed,mark=square,mark size=1.55pt,mark options={draw=drawBlue,fill=white,solid},
+    error bars/error bar style={drawBlue,solid,line width=0.5pt}},
+  ci/.style={error bars/.cd, y dir=both, y explicit},
+}
+
+\begin{document}
+\begin{tikzpicture}[draw canvas]
+  \path[use as bounding box] (0,0) rectangle (\FigureWidthMM,\FigureHeightMM);
+
+  % ------------------------------------------------------------ shared legend
+  \begin{scope}[font=\sffamily\fontsize{7.0}{7.8}\selectfont,text=drawInk]
+    \draw[drawOrange,line width=0.85pt] (8,72.6) -- (16,72.6);
+    \path plot[mark=*,mark size=1.35pt,mark options={draw=drawOrange,fill=drawOrange}] coordinates {(12,72.6)};
+    \node[anchor=west] at (17,72.6) {Haechi, timestamp key (rounds)};
+    \draw[drawPlum,densely dotted,line width=0.85pt] (60,72.6) -- (68,72.6);
+    \path plot[mark=triangle*,mark size=1.6pt,mark options={draw=drawPlum,fill=drawPlum}] coordinates {(64,72.6)};
+    \node[anchor=west] at (69,72.6) {Haechi, watermark};
+    \draw[drawBlue,densely dashed,line width=0.85pt] (96,72.6) -- (104,72.6);
+    \path plot[mark=square,mark size=1.55pt,mark options={draw=drawBlue,fill=white,solid}] coordinates {(100,72.6)};
+    \node[anchor=west] at (105,72.6) {DLO};
+  \end{scope}
+
+  % ------------------------------------------------------------ (a) attack-induced FVR vs skew
+  \begin{axis}[dlo panel, at={(13.5mm,46mm)},
+      title={(a) Attack-induced FVR, $n=3$},
+      xmin=0, xmax=3.1, xtick={0,1,2,3},
+      ymin=-5, ymax=105, ytick={0,50,100},
+      xlabel={Maximum skew $\delta_{\max}$ (s)}, ylabel={A-FVR (\%)}]
+    \addplot[haechi line,ci] table[x=skew,y=fvr_haechi,y error=fvr_haechi_ci,col sep=comma] {fig_core_results_skew.csv};
+    \addplot[dlo line,ci] table[x=skew,y=fvr_dlo,y error=fvr_dlo_ci,col sep=comma] {fig_core_results_skew.csv};
+  \end{axis}
+
+  % ------------------------------------------------------------ (b) latency vs skew
+  \begin{axis}[dlo panel, ymode=log, ymin=0.02, ymax=5, ytick={0.05,0.5,5}, yticklabels={0.05,0.5,5}, at={(75mm,46mm)},
+      title={(b) Latency, $n=3$},
+      xmin=0, xmax=3.1, xtick={0,1,2,3},
+      xlabel={Maximum skew $\delta_{\max}$ (s)}, ylabel={Latency (s)}]
+    \addplot[wm line,ci] table[x=skew,y=lat_haechiwm,y error=lat_haechiwm_ci,col sep=comma] {fig_core_results_skew.csv};
+    \addplot[haechi line,ci] table[x=skew,y=lat_haechi,y error=lat_haechi_ci,col sep=comma] {fig_core_results_skew.csv};
+    \addplot[dlo line,ci] table[x=skew,y=lat_dlo,y error=lat_dlo_ci,col sep=comma] {fig_core_results_skew.csv};
+  \end{axis}
+
+  % ------------------------------------------------------------ (c) attack-induced FVR vs n
+  \begin{axis}[dlo panel, at={(13.5mm,11mm)},
+      title={(c) Attack-induced FVR, $\delta_{\max}=1.0$\,s},
+      xmin=0, xmax=32, xtick={3,10,20,30},
+      ymin=-5, ymax=105, ytick={0,50,100},
+      xlabel={Number of shards $n$}, ylabel={A-FVR (\%)}]
+    \addplot[haechi line,ci] table[x=n,y=fvr_haechi,y error=fvr_haechi_ci,col sep=comma] {fig_core_results_scale.csv};
+    \addplot[dlo line,ci] table[x=n,y=fvr_dlo,y error=fvr_dlo_ci,col sep=comma] {fig_core_results_scale.csv};
+  \end{axis}
+
+  % ------------------------------------------------------------ (d) latency vs n
+  \begin{axis}[dlo panel, ymode=log, ymin=0.02, ymax=5, ytick={0.05,0.5,5}, yticklabels={0.05,0.5,5}, at={(75mm,11mm)},
+      title={(d) Latency, $\delta_{\max}=1.0$\,s},
+      xmin=0, xmax=32, xtick={3,10,20,30},
+      xlabel={Number of shards $n$}, ylabel={Latency (s)}]
+    \addplot[wm line,ci] table[x=n,y=lat_haechiwm,y error=lat_haechiwm_ci,col sep=comma] {fig_core_results_scale.csv};
+    \addplot[haechi line,ci] table[x=n,y=lat_haechi,y error=lat_haechi_ci,col sep=comma] {fig_core_results_scale.csv};
+    \addplot[dlo line,ci] table[x=n,y=lat_dlo,y error=lat_dlo_ci,col sep=comma] {fig_core_results_scale.csv};
+  \end{axis}
+\end{tikzpicture}
+\end{document}

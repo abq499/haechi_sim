@@ -1,0 +1,10 @@
+delay_dist,engine_label,runs,runs_with_viol,max_gap_minus_W
+lognormal,dlo-rotated,270,0,-0.2583103883311715
+lognormal,dlo-static,270,0,-0.25880977093211355
+lognormal,haechi_round,270,0,-0.2681559683506296
+pareto,dlo-rotated,270,92,59.64385474232536
+pareto,dlo-static,270,92,59.64385474232536
+pareto,haechi_round,270,92,59.64385474232536
+uniform,dlo-rotated,1470,0,-0.2583103883311715
+uniform,dlo-static,1470,0,-0.25880977093211355
+uniform,haechi_round,1470,0,-0.2681559683506296
