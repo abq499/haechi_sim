@@ -6,23 +6,25 @@
 %   unit:   mean over 30 seeds; error bars = 95 % Student-t CI half-width (*_ci columns).
 %   model:  lockstep (Poisson 1 tx/s/shard, cut offset U(0, 0.05 s), delay U(0.01, 0.05 s),
 %           tau_max = eps + tau + Delta).
-%   panels: (a) attack-induced FVR vs max skew, n = 3; (b) latency vs max skew, n = 3 (log);
-%           (c) attack-induced FVR vs n; (d) latency vs n (log).
-%   encoding: Haechi, rounds = orange, filled circle, solid; Haechi, watermark = plum, triangle,
-%             dotted; DLO = blue, open square, dashed. Haechi-rounds and DLO latencies coincide.
+%   panels: (a) attack-induced FVR vs max skew, n = 3 (lines); (b) latency vs max skew, n = 3
+%           (grouped bars, log); (c) attack-induced FVR vs n (lines); (d) latency vs n (grouped bars, log).
+%   encoding: Haechi, rounds = orange, filled circle, solid line / solid orange bar;
+%             Haechi, watermark = light plum bar; DLO = blue, open square, dashed line / white bar with
+%             blue outline. Haechi-rounds and DLO latencies are equal, so they are drawn as adjacent bars
+%             (not overlapping lines); bar order watermark, rounds, DLO puts the equal bars side by side. Bars start at the axis floor (log origin y=infty).
 % build:  TEXINPUTS must include the paper's figures/ folder (draw-paper.sty).
-% target: 122 mm x 76 mm.
+% target: 122 mm x 68.5 mm.
 
 \documentclass[tikz,border=0pt]{standalone}
 \usepackage{draw-paper}
 
 \def\FigureWidthMM{122}
-\def\FigureHeightMM{76}
+\def\FigureHeightMM{68.5}
 
 \pgfplotsset{
   dlo panel/.style={
     draw axis,
-    width=42mm, height=17mm,
+    width=42mm, height=15mm,
     xtick pos=bottom, ytick pos=left,
     scaled y ticks=false,
     anchor=south west,
@@ -41,6 +43,15 @@
   dlo line/.style={draw=drawBlue,densely dashed,mark=square,mark size=1.55pt,mark options={draw=drawBlue,fill=white,solid},
     error bars/error bar style={drawBlue,solid,line width=0.5pt}},
   ci/.style={error bars/.cd, y dir=both, y explicit},
+  lat panel/.style={ymin=0.02, ymax=5,
+    ytick={0.05,0.5,5}, yticklabels={0.05,0.5,5},
+    ybar=0pt, bar width=1.35mm, xmin=-0.6, xmax=6.6, xtick={0,...,6},
+    major x tick style={draw=none}, ylabel={Latency (s)},
+    every axis plot/.append style={line width=0.45pt},
+    error bars/error bar style={drawInk,solid,line width=0.4pt}},
+  haechi bar/.style={draw=drawOrange,fill=drawOrange},
+  wm bar/.style={draw=drawPlum,fill=drawPlum!35},
+  dlo bar/.style={draw=drawBlue,fill=white,line width=0.7pt},
 }
 
 \begin{document}
@@ -48,20 +59,22 @@
   \path[use as bounding box] (0,0) rectangle (\FigureWidthMM,\FigureHeightMM);
 
   % ------------------------------------------------------------ shared legend
+  % line sample = panels (a,c); bar swatch = panels (b,d)
   \begin{scope}[font=\sffamily\fontsize{7.0}{7.8}\selectfont,text=drawInk]
-    \draw[drawOrange,line width=0.85pt] (8,72.6) -- (16,72.6);
-    \path plot[mark=*,mark size=1.35pt,mark options={draw=drawOrange,fill=drawOrange}] coordinates {(12,72.6)};
-    \node[anchor=west] at (17,72.6) {Haechi, timestamp key (rounds)};
-    \draw[drawPlum,densely dotted,line width=0.85pt] (60,72.6) -- (68,72.6);
-    \path plot[mark=triangle*,mark size=1.6pt,mark options={draw=drawPlum,fill=drawPlum}] coordinates {(64,72.6)};
-    \node[anchor=west] at (69,72.6) {Haechi, watermark};
-    \draw[drawBlue,densely dashed,line width=0.85pt] (96,72.6) -- (104,72.6);
-    \path plot[mark=square,mark size=1.55pt,mark options={draw=drawBlue,fill=white,solid}] coordinates {(100,72.6)};
-    \node[anchor=west] at (105,72.6) {DLO};
+    \draw[drawOrange,line width=0.85pt] (6,66.1) -- (14,66.1);
+    \path plot[mark=*,mark size=1.35pt,mark options={draw=drawOrange,fill=drawOrange}] coordinates {(10,66.1)};
+    \draw[draw=drawOrange,fill=drawOrange,line width=0.45pt] (15.5,64.7) rectangle (17.3,67.5);
+    \node[anchor=west] at (18,66.1) {Haechi, timestamp key (rounds)};
+    \draw[draw=drawPlum,fill=drawPlum!35,line width=0.45pt] (63.5,64.7) rectangle (65.3,67.5);
+    \node[anchor=west] at (66,66.1) {Haechi, watermark};
+    \draw[drawBlue,densely dashed,line width=0.85pt] (90,66.1) -- (98,66.1);
+    \path plot[mark=square,mark size=1.55pt,mark options={draw=drawBlue,fill=white,solid}] coordinates {(94,66.1)};
+    \draw[draw=drawBlue,fill=white,line width=0.7pt] (99.5,64.7) rectangle (101.3,67.5);
+    \node[anchor=west] at (102,66.1) {DLO};
   \end{scope}
 
   % ------------------------------------------------------------ (a) attack-induced FVR vs skew
-  \begin{axis}[dlo panel, at={(13.5mm,46mm)},
+  \begin{axis}[dlo panel, at={(13.5mm,41mm)},
       title={(a) Attack-induced FVR, $n=3$},
       xmin=0, xmax=3.1, xtick={0,1,2,3},
       ymin=-5, ymax=105, ytick={0,50,100},
@@ -70,18 +83,18 @@
     \addplot[dlo line,ci] table[x=skew,y=fvr_dlo,y error=fvr_dlo_ci,col sep=comma] {fig_core_results_skew.csv};
   \end{axis}
 
-  % ------------------------------------------------------------ (b) latency vs skew
-  \begin{axis}[dlo panel, ymode=log, ymin=0.02, ymax=5, ytick={0.05,0.5,5}, yticklabels={0.05,0.5,5}, at={(75mm,46mm)},
+  % ------------------------------------------------------------ (b) latency vs skew (grouped bars)
+  \begin{axis}[dlo panel, ymode=log, log origin y=infty, lat panel, at={(75mm,41mm)},
       title={(b) Latency, $n=3$},
-      xmin=0, xmax=3.1, xtick={0,1,2,3},
-      xlabel={Maximum skew $\delta_{\max}$ (s)}, ylabel={Latency (s)}]
-    \addplot[wm line,ci] table[x=skew,y=lat_haechiwm,y error=lat_haechiwm_ci,col sep=comma] {fig_core_results_skew.csv};
-    \addplot[haechi line,ci] table[x=skew,y=lat_haechi,y error=lat_haechi_ci,col sep=comma] {fig_core_results_skew.csv};
-    \addplot[dlo line,ci] table[x=skew,y=lat_dlo,y error=lat_dlo_ci,col sep=comma] {fig_core_results_skew.csv};
+      xticklabels={0.1,0.5,1.0,1.5,2.0,2.5,3.0},
+      xlabel={Maximum skew $\delta_{\max}$ (s)}]
+    \addplot[wm bar,ci] table[x expr=\coordindex,y=lat_haechiwm,y error=lat_haechiwm_ci,col sep=comma] {fig_core_results_skew.csv};
+    \addplot[haechi bar,ci] table[x expr=\coordindex,y=lat_haechi,y error=lat_haechi_ci,col sep=comma] {fig_core_results_skew.csv};
+    \addplot[dlo bar,ci] table[x expr=\coordindex,y=lat_dlo,y error=lat_dlo_ci,col sep=comma] {fig_core_results_skew.csv};
   \end{axis}
 
   % ------------------------------------------------------------ (c) attack-induced FVR vs n
-  \begin{axis}[dlo panel, at={(13.5mm,11mm)},
+  \begin{axis}[dlo panel, at={(13.5mm,10mm)},
       title={(c) Attack-induced FVR, $\delta_{\max}=1.0$\,s},
       xmin=0, xmax=32, xtick={3,10,20,30},
       ymin=-5, ymax=105, ytick={0,50,100},
@@ -90,14 +103,14 @@
     \addplot[dlo line,ci] table[x=n,y=fvr_dlo,y error=fvr_dlo_ci,col sep=comma] {fig_core_results_scale.csv};
   \end{axis}
 
-  % ------------------------------------------------------------ (d) latency vs n
-  \begin{axis}[dlo panel, ymode=log, ymin=0.02, ymax=5, ytick={0.05,0.5,5}, yticklabels={0.05,0.5,5}, at={(75mm,11mm)},
+  % ------------------------------------------------------------ (d) latency vs n (grouped bars)
+  \begin{axis}[dlo panel, ymode=log, log origin y=infty, lat panel, at={(75mm,10mm)},
       title={(d) Latency, $\delta_{\max}=1.0$\,s},
-      xmin=0, xmax=32, xtick={3,10,20,30},
-      xlabel={Number of shards $n$}, ylabel={Latency (s)}]
-    \addplot[wm line,ci] table[x=n,y=lat_haechiwm,y error=lat_haechiwm_ci,col sep=comma] {fig_core_results_scale.csv};
-    \addplot[haechi line,ci] table[x=n,y=lat_haechi,y error=lat_haechi_ci,col sep=comma] {fig_core_results_scale.csv};
-    \addplot[dlo line,ci] table[x=n,y=lat_dlo,y error=lat_dlo_ci,col sep=comma] {fig_core_results_scale.csv};
+      xticklabels={3,5,10,15,20,25,30},
+      xlabel={Number of shards $n$}]
+    \addplot[wm bar,ci] table[x expr=\coordindex,y=lat_haechiwm,y error=lat_haechiwm_ci,col sep=comma] {fig_core_results_scale.csv};
+    \addplot[haechi bar,ci] table[x expr=\coordindex,y=lat_haechi,y error=lat_haechi_ci,col sep=comma] {fig_core_results_scale.csv};
+    \addplot[dlo bar,ci] table[x expr=\coordindex,y=lat_dlo,y error=lat_dlo_ci,col sep=comma] {fig_core_results_scale.csv};
   \end{axis}
 \end{tikzpicture}
 \end{document}
